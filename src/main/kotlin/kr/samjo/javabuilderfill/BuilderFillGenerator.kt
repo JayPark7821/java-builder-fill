@@ -7,9 +7,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import kr.samjo.javabuilderfill.generator.ResultStringGenerator
+import kr.samjo.javabuilderfill.generator.impl.BuilderResultStringGenerator
+import kr.samjo.javabuilderfill.generator.impl.ConstructorResultStringGenerator
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
-import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -20,6 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger
  * @since 11/17/23
  */
 class BuilderFillGenerator : AnAction() {
+
+    private val resultStringGenerators: List<ResultStringGenerator> = listOf(
+        BuilderResultStringGenerator(),
+        ConstructorResultStringGenerator()
+    )
 
     override fun update(e: AnActionEvent) {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE)
@@ -41,10 +48,16 @@ class BuilderFillGenerator : AnAction() {
 
         val psiClass = PsiTreeUtil.getParentOfType(
             currentCaretElement, PsiClass::class.java
-        )
+        )?: throw IllegalArgumentException("Invalid PsiClass")
+
+        val resultOption = BuilderFillOptions.findOption(menuText)
+
+        val resultMapString: String = resultStringGenerators.find { it.support(resultOption) }
+            ?.process(psiClass)
+            ?: throw IllegalArgumentException("Invalid BuilderFillOptions")
 
         Toolkit.getDefaultToolkit().systemClipboard
-            .setContents(StringSelection("BUILDER TEST GENERATED"), null)
+            .setContents(StringSelection(resultMapString), null)
     }
 
     private fun isClassElement(psiFile: PsiFile, editor: Editor): Boolean {
