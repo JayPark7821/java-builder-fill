@@ -7,8 +7,16 @@ package kr.samjo.javabuilderfill
  * @version 1.0.0
  * @since 11/17/23
  */
-enum class BuilderFillOptions {
-    WITHOUT_DEFAULT_VALUES,
-    WITH_DEFAULT_VALUES,
+enum class BuilderFillOptions(val value: String) {
+
+    BUILDER("Builder-Fill-Generator"),
+    CONSTRUCTOR("Constructor-Fill-Generator"),
     ;
+
+    companion object{
+        fun findOption(value: String): BuilderFillOptions {
+            return BuilderFillOptions.values().find { it.value == value } ?:
+            throw IllegalArgumentException("Invalid BuilderFillOptions")
+        }
+    }
 }
