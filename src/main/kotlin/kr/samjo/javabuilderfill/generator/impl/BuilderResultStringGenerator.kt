@@ -6,6 +6,7 @@ import com.intellij.psi.PsiType
 import kr.samjo.javabuilderfill.BuilderFillOptions
 import kr.samjo.javabuilderfill.generator.ResultStringGenerator
 
+
 class BuilderResultStringGenerator : ResultStringGenerator() {
     companion object{
         val SUPPORT_OPTION = BuilderFillOptions.BUILDER
@@ -26,5 +27,4 @@ class BuilderResultStringGenerator : ResultStringGenerator() {
         resultMapBuilder.append(".build();")
         return resultMapBuilder
     }
-
 }
