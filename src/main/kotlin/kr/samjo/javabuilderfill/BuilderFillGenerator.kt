@@ -3,15 +3,15 @@ package kr.samjo.javabuilderfill
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.progress.ModalTaskOwner.project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import kr.samjo.javabuilderfill.generator.ResultStringGenerator
 import kr.samjo.javabuilderfill.generator.impl.BuilderResultStringGenerator
 import kr.samjo.javabuilderfill.generator.impl.ConstructorResultStringGenerator
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 
 /**
@@ -56,8 +56,17 @@ class BuilderFillGenerator : AnAction() {
             ?.process(psiClass)
             ?: throw IllegalArgumentException("Invalid BuilderFillOptions")
 
-        Toolkit.getDefaultToolkit().systemClipboard
-            .setContents(StringSelection(resultMapString), null)
+//        Toolkit.getDefaultToolkit().systemClipboard
+//            .setContents(StringSelection(resultMapString), null)
+
+//        val psiClass = e.getData(CommonDataKeys.PSI_ELEMENT) as PsiClass
+        val project = e.getRequiredData(CommonDataKeys.PROJECT);
+        val document = editor.getDocument();
+
+        WriteCommandAction.writeCommandAction(project)
+            .run<RuntimeException> {
+                document.insertString(editor.caretModel.offset, resultMapString)
+            }
     }
 
     private fun isClassElement(psiFile: PsiFile, editor: Editor): Boolean {
