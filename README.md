@@ -3,7 +3,7 @@ Intellij plugin that provide code completion for @Builder lombok annotation to g
 Inspired by [kotlin-fill-class](https://github.com/suusan2go/kotlin-fill-class)
 
 ## Usage
-![2023-11-25 00-31-43](https://github.com/Boiler-Craft/java-boiler-craft/assets/98400407/be9a1963-6896-4bbf-882e-17ff405d593c)
+![2023-11-25 00-31-43](https://github.com/Boiler-Craft/java-boiler-craft/assets/98400407/22ed0d02-03bc-43ca-a6ea-6887ecc4ab9e)
 
 ## How to install
 this plugin is registered on the intellij marketplace and is under review.
