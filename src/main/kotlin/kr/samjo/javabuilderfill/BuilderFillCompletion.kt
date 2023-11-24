@@ -1,11 +1,11 @@
 package kr.samjo.javabuilderfill
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassOwner
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.psi.util.parentOfType
 import kr.samjo.javabuilderfill.processor.CompletionProcessor
 import kr.samjo.javabuilderfill.processor.impl.BuilderCompletionProcessor
 import kr.samjo.javabuilderfill.processor.impl.ConstructorCompletionProcessor
@@ -42,14 +42,12 @@ class BuilderFillCompletion : CompletionContributor() {
 
     private fun findTargetClass(
         parameters: CompletionParameters, psiElement: PsiElement,
-    ): PsiClass? {
-        val psiFile = psiElement.containingFile
-        val packageName = if (psiFile is PsiClassOwner) psiFile.packageName else null
-        val className = if (packageName != null) "$packageName.${psiElement.text}" else psiElement.text
-        return JavaPsiFacade.getInstance(parameters.originalFile.project)
-            .findClass(className, GlobalSearchScope.allScope(parameters.originalFile.project))
+    ) = psiElement.let {
+        val project = parameters.originalFile.project
+        val psiClasses = PsiShortNamesCache.getInstance(project)
+            .getClassesByName(it.text, GlobalSearchScope.allScope(project))
+        psiClasses.firstOrNull()
     }
-
 
     private fun getTargetElement(
         parameters: CompletionParameters,
