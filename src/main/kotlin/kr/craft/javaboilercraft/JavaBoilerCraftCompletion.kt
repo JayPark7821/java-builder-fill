@@ -1,25 +1,22 @@
-package kr.samjo.javabuilderfill
+package kr.craft.javaboilercraft
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
-import kr.samjo.javabuilderfill.processor.CompletionProcessor
-import kr.samjo.javabuilderfill.processor.impl.BuilderCompletionProcessor
-import kr.samjo.javabuilderfill.processor.impl.ConstructorCompletionProcessor
+import kr.craft.javaboilercraft.processor.CompletionProcessor
+import kr.craft.javaboilercraft.processor.impl.BuilderCompletionProcessor
+import kr.craft.javaboilercraft.processor.impl.ConstructorCompletionProcessor
 
 
 /**
- * BuilderFillCompletion
+ * JavaBoilerCraftCompletion
  *
  * @author jaypark
  * @version 1.0.0
  * @since 11/22/23
  */
-class BuilderFillCompletion : CompletionContributor() {
+class JavaBoilerCraftCompletion : CompletionContributor() {
 
     private val completionProcessors: List<CompletionProcessor> = listOf(
         BuilderCompletionProcessor(),

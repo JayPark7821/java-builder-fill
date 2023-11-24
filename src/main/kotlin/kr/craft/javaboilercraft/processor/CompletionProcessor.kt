@@ -1,4 +1,4 @@
-package kr.samjo.javabuilderfill.processor
+package kr.craft.javaboilercraft.processor
 
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder

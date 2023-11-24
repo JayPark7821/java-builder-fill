@@ -1,9 +1,8 @@
-package kr.samjo.javabuilderfill.processor.impl
+package kr.craft.javaboilercraft.processor.impl
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import kr.samjo.javabuilderfill.processor.CompletionProcessor
+import kr.craft.javaboilercraft.processor.CompletionProcessor
 
 /**
  * BuilderCompletionProcessor
