@@ -1,6 +1,14 @@
 # java-boiler-craft plugin
-You input the class name and then use a dot. After that, if you choose 'All Args Constructor,' a constructor containing all parameters is automatically generated. On the other hand, if you select 'Builder Completion,' the code with the builder pattern is generated.
-By making this selection, the code is automatically created, eliminating the need for the user to manually write each constructor or implement the builder pattern. This functionality enhances the efficiency of code writing.
+You input the class name and then use a dot. After that,   
+if you choose 'All Args Constructor,' a constructor containing all parameters is automatically generated.  
+
+On the other hand,  
+if you select 'Builder Completion,' the code with the builder pattern is generated.  
+By making this selection, the code is automatically created,   
+eliminating the need for the user to manually write each constructor or implement the builder pattern.   
+
+This functionality enhances the efficiency of code writing.
+
 Inspired by [kotlin-fill-class](https://github.com/suusan2go/kotlin-fill-class)
 
 ## Usage
