@@ -2,6 +2,8 @@ package kr.samjo.javabuilderfill
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import kr.samjo.javabuilderfill.processor.CompletionProcessor
@@ -40,9 +42,12 @@ class BuilderFillCompletion : CompletionContributor() {
 
     private fun findTargetClass(
         parameters: CompletionParameters, psiElement: PsiElement,
-    ) = psiElement.let {
-        JavaPsiFacade.getInstance(parameters.originalFile.project)
-            .findClass(it.text, GlobalSearchScope.allScope(parameters.originalFile.project))
+    ): PsiClass? {
+        val psiFile = psiElement.containingFile
+        val packageName = if (psiFile is PsiClassOwner) psiFile.packageName else null
+        val className = if (packageName != null) "$packageName.${psiElement.text}" else psiElement.text
+        return JavaPsiFacade.getInstance(parameters.originalFile.project)
+            .findClass(className, GlobalSearchScope.allScope(parameters.originalFile.project))
     }
 
 

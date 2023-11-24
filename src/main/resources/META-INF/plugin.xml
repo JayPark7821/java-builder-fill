@@ -28,19 +28,7 @@
         <completion.contributor
                 language="JAVA"
                 implementationClass="kr.samjo.javabuilderfill.BuilderFillCompletion"/>
-
     </extensions>
     <actions>
-
-        <action id="Builder-Fill-Generator" class="kr.samjo.javabuilderfill.BuilderFillGenerator"
-                text="Builder-Fill-Generator"
-                description="Java Builder Fill Generator">
-            <add-to-group group-id="GenerateGroup" anchor="first"/>
-        </action>
-        <action id="Constructor-Fill-Generator" class="kr.samjo.javabuilderfill.BuilderFillGenerator"
-                text="Constructor-Fill-Generator"
-                description="Java Constructor Fill Generator">
-            <add-to-group group-id="GenerateGroup" anchor="first"/>
-        </action>
     </actions>
 </idea-plugin>
