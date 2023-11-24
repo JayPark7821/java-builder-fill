@@ -15,7 +15,7 @@ import kr.samjo.javabuilderfill.processor.CompletionProcessor
 class BuilderCompletionProcessor : CompletionProcessor() {
 
     companion object {
-        private const val SUPPORT_OPTION = "Builder"
+        private const val SUPPORT_OPTION = "lombok.Builder"
     }
 
     override fun supportOption() = SUPPORT_OPTION
