@@ -1,12 +1,11 @@
-package kr.samjo.javabuilderfill.processor.impl
+package kr.craft.javaboilercraft.processor.impl
 
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import kr.samjo.javabuilderfill.processor.CompletionProcessor
+import kr.craft.javaboilercraft.processor.CompletionProcessor
 
 /**
  * BuilderCompletionProcessor
