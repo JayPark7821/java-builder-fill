@@ -1,11 +1,12 @@
 package kr.samjo.javabuilderfill
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
-import com.intellij.psi.util.parentOfType
 import kr.samjo.javabuilderfill.processor.CompletionProcessor
 import kr.samjo.javabuilderfill.processor.impl.BuilderCompletionProcessor
 import kr.samjo.javabuilderfill.processor.impl.ConstructorCompletionProcessor
