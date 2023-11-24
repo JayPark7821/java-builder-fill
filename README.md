@@ -1,5 +1,6 @@
-# java-builder-fill plugin
-Intellij plugin that provide code completion for @Builder lombok annotation to generate builder boilerplate.
+# java-boiler-craft plugin
+You input the class name and then use a dot. After that, if you choose 'All Args Constructor,' a constructor containing all parameters is automatically generated. On the other hand, if you select 'Builder Completion,' the code with the builder pattern is generated.
+By making this selection, the code is automatically created, eliminating the need for the user to manually write each constructor or implement the builder pattern. This functionality enhances the efficiency of code writing.
 Inspired by [kotlin-fill-class](https://github.com/suusan2go/kotlin-fill-class)
 
 ## Usage
@@ -9,7 +10,7 @@ Inspired by [kotlin-fill-class](https://github.com/suusan2go/kotlin-fill-class)
 this plugin is registered on the intellij marketplace and is under review.
 
 ## Contributors
-Thank you to all our [contributors](https://https://github.com/HANGHAE-SAM-JO/java-builder-fill/graphs/contributors)!
+Thank you to all our [contributors](https://github.com/Boiler-Craft/java-boiler-craft/graphs/contributors)!
 
 ## Maintainers
 - [@chanwoothecali](https://github.com/chanwoothecali)
