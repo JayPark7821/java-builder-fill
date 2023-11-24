@@ -8,14 +8,14 @@
     <name>Java-boiler-craft</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="boilercraft.kr@gmail.com" url="https://github.com/Boiler-Craft/java-builder-fill">Boiler-Craft</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    You input the class name and then use a dot. After that, if you choose 'All Args Constructor,' a constructor containing all parameters is automatically generated. On the other hand, if you select 'Builder Completion,' the code with the builder pattern is generated.
+    By making this selection, the code is automatically created, eliminating the need for the user to manually write each constructor or implement the builder pattern. This functionality enhances the efficiency of code writing.
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
