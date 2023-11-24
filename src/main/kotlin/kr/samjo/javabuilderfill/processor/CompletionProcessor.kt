@@ -16,14 +16,14 @@ import com.intellij.psi.PsiElement
 abstract class CompletionProcessor {
     abstract fun supportOption(): String
     abstract fun applicable(targetClass: PsiClass): Boolean
-    abstract fun completionString(targetClass: PsiClass): String
+    abstract fun completionString(targetClass: PsiClass, targetElement: PsiElement): String
 
     fun process(
         targetClass: PsiClass,
         targetElement: PsiElement,
         result: CompletionResultSet
     ) {
-        val completionString = completionString(targetClass)
+        val completionString = completionString(targetClass, targetElement)
         val element = LookupElementBuilder.create(supportOption() + " Completion")
             .withInsertHandler { context, _ ->
                 val startOffset = context.startOffset - (targetElement.textLength + 1)

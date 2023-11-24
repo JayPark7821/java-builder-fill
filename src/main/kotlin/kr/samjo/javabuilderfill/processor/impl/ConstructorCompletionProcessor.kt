@@ -29,7 +29,7 @@ class ConstructorCompletionProcessor : CompletionProcessor() {
         return false
     }
 
-    override fun completionString(targetClass: PsiClass): String {
+    override fun completionString(targetClass: PsiClass, targetElement: PsiElement): String {
         return targetClass.fields.joinToString(
             prefix = "new ${targetClass.name}(",
             postfix = ");\n",
