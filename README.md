@@ -12,7 +12,7 @@ This functionality enhances the efficiency of code writing.
 Inspired by [kotlin-fill-class](https://github.com/suusan2go/kotlin-fill-class)
 
 ## Usage
-![2023-11-25 00-31-43](https://github.com/Boiler-Craft/java-boiler-craft/assets/98400407/22ed0d02-03bc-43ca-a6ea-6887ecc4ab9e)
+![use_example](https://github.com/Boiler-Craft/java-boiler-craft/assets/98400407/4473c994-f401-4302-a9ba-144d7f970455)
 
 ## How to install
 this plugin is registered on the intellij marketplace and is under review.
