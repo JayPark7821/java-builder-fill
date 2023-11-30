@@ -22,7 +22,7 @@ class BuilderCompletionProcessor : CompletionProcessor() {
     }
 
     override fun supportOption() = SUPPORT_OPTION
-    override fun applicable(targetClass: PsiClass) = (targetClass.getAnnotation("${PACKAGE_NAME}.${SUPPORT_OPTION}") != null)
+    override fun applicable(targetElement: PsiElement, targetClass: PsiClass) = (targetClass.getAnnotation("${PACKAGE_NAME}.${SUPPORT_OPTION}") != null)
 
     override fun completionString(targetClass: PsiClass, targetElement: PsiElement): String {
         val indent = " ".repeat(getIndent(targetElement))

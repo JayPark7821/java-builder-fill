@@ -18,7 +18,7 @@ class ConstructorCompletionProcessor : CompletionProcessor() {
     }
 
     override fun supportOption() = SUPPORT_OPTION
-    override fun applicable(targetClass: PsiClass): Boolean {
+    override fun applicable(targetElement: PsiElement, targetClass: PsiClass): Boolean {
         val constructors = targetClass.constructors
         constructors.forEach { constructor ->
             if (constructor.parameterList.parameters.size == targetClass.fields.size) {

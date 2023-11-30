@@ -29,9 +29,10 @@ class JavaBoilerCraftCompletion : CompletionContributor() {
             val findClass = findTargetClass(parameters, psiElement) ?: return
 
             findClass.let {
+                targetClass ->
                 completionProcessors.forEach { processor ->
-                    if (processor.applicable(it)) {
-                        processor.process(it, psiElement, result)
+                    if (processor.applicable(psiElement, targetClass)) {
+                        processor.process(targetClass, psiElement, result)
                     }
                 }
             }
