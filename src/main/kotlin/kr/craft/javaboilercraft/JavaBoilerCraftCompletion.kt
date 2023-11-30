@@ -7,6 +7,7 @@ import com.intellij.psi.search.PsiShortNamesCache
 import kr.craft.javaboilercraft.processor.CompletionProcessor
 import kr.craft.javaboilercraft.processor.impl.BuilderCompletionProcessor
 import kr.craft.javaboilercraft.processor.impl.ConstructorCompletionProcessor
+import kr.craft.javaboilercraft.processor.impl.RestDocsCompletionProcessor
 
 
 /**
@@ -20,7 +21,8 @@ class JavaBoilerCraftCompletion : CompletionContributor() {
 
     private val completionProcessors: List<CompletionProcessor> = listOf(
         BuilderCompletionProcessor(),
-        ConstructorCompletionProcessor()
+        ConstructorCompletionProcessor(),
+        RestDocsCompletionProcessor(),
     )
 
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
