@@ -6,6 +6,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import kr.craft.javaboilercraft.processor.CompletionProcessor
+import kr.craft.javaboilercraft.processor.util.EditorUtils.getIndent
 
 /**
  * BuilderCompletionProcessor
@@ -33,14 +34,4 @@ class BuilderCompletionProcessor : CompletionProcessor() {
         ) { field -> "${indent}\t.${field.name}(${field.name})" }
     }
 
-    private fun getIndent(psiElement: PsiElement): Int {
-        val psiFile = psiElement.containingFile ?: return 0
-        val documentManager = FileDocumentManager.getInstance()
-        val document: Document = documentManager.getDocument(psiFile.virtualFile) ?: return 0
-        val lineNumber = document.getLineNumber(psiElement.textOffset)
-        val lineStartOffset = document.getLineStartOffset(lineNumber)
-        val lineEndOffset = document.getLineEndOffset(lineNumber)
-        val lineText = document.getText(TextRange(lineStartOffset, lineEndOffset))
-        return "^\\s*".toRegex().find(lineText)?.value?.length ?: 0
-    }
 }

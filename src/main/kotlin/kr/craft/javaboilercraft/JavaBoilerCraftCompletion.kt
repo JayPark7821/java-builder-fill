@@ -7,7 +7,9 @@ import com.intellij.psi.search.PsiShortNamesCache
 import kr.craft.javaboilercraft.processor.CompletionProcessor
 import kr.craft.javaboilercraft.processor.impl.BuilderCompletionProcessor
 import kr.craft.javaboilercraft.processor.impl.ConstructorCompletionProcessor
-import kr.craft.javaboilercraft.processor.impl.RestDocsCompletionProcessor
+import kr.craft.javaboilercraft.processor.impl.MockMvcTestCompletionProcessor
+import kr.craft.javaboilercraft.processor.util.MethodPropertiesPsiConverter
+import kr.craft.javaboilercraft.processor.util.MockMvcTestBoilerplateGenerator
 
 
 /**
@@ -22,7 +24,7 @@ class JavaBoilerCraftCompletion : CompletionContributor() {
     private val completionProcessors: List<CompletionProcessor> = listOf(
         BuilderCompletionProcessor(),
         ConstructorCompletionProcessor(),
-        RestDocsCompletionProcessor(),
+        MockMvcTestCompletionProcessor(),
     )
 
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
@@ -34,6 +36,7 @@ class JavaBoilerCraftCompletion : CompletionContributor() {
                 targetClass ->
                 completionProcessors.forEach { processor ->
                     if (processor.applicable(psiElement, targetClass)) {
+                        println("processor: ${processor.supportOption()}")
                         processor.process(targetClass, psiElement, result)
                     }
                 }
