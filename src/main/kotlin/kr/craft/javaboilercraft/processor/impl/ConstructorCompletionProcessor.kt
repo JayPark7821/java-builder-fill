@@ -1,5 +1,6 @@
 package kr.craft.javaboilercraft.processor.impl
 
+import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import kr.craft.javaboilercraft.processor.CompletionProcessor
@@ -28,7 +29,7 @@ class ConstructorCompletionProcessor : CompletionProcessor() {
         return false
     }
 
-    override fun completionString(targetClass: PsiClass, targetElement: PsiElement): String {
+    override fun completionString(targetClass: PsiClass, targetElement: PsiElement, parameters: CompletionParameters): String {
         return targetClass.fields.joinToString(
             prefix = "new ${targetClass.name}(",
             postfix = ");\n",
