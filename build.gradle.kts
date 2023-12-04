@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.intellij") version "1.16.0"
 }
 
-group = "kr.sam-jo"
-version = "1.1"
+group = "kr.boiler-craft"
+version = "2.0"
 
 repositories {
     mavenCentral()
