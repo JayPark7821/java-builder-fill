@@ -116,11 +116,6 @@ object MockMvcTestBoilerplateGenerator {
     ): PsiClassInfo? {
         val psiClass = targetClass.resolve() ?: return null
         if (TypeReference.isCollection(psiClass.qualifiedName ?: "")) {
-//            val typeParameters = psiClass.typeParameters.map { typeParameter ->
-//                val psiType = targetClass.parameters[typeParameter.index]
-//                Pair(typeParameter, psiType)
-//            }.toList()
-
             val collectionClass = (targetClass.parameters[0] as PsiClassType).resolve() ?: return null
             return PsiClassInfo(collectionClass, listOf(), "[].")
         }
@@ -194,11 +189,6 @@ object MockMvcTestBoilerplateGenerator {
 
         val psiClassInfo = getPsiClassFrom(psiClassType) ?: return restDocList
 
-        psiClassInfo.psiClass.fields.forEach { field ->
-            println("field : ${field.name}")
-            println("field type : ${field.type.canonicalText}")
-        }
-
         psiClassInfo.psiClass.fields.forEach { field: PsiField ->
             val type = getPsiType(psiClassInfo, field)
 
@@ -206,16 +196,13 @@ object MockMvcTestBoilerplateGenerator {
             var fieldName = beforeFieldName + field.name
 
             if (type is PsiPrimitiveType) {
-                println("primitive fieldName : $beforeFieldName")
                 restDocList.add(generateFieldWithPathText(fieldName, field.name))
             }
             if (type is PsiClassType) {
                 val resolvedClass = type.resolve()
                 if (resolvedClass != null && isDocumentableClass(resolvedClass)) {
-                    println("isDocumentableClass fieldName : $beforeFieldName")
                     restDocList.add(generateFieldWithPathText(fieldName, field.name))
                 } else if (TypeReference.isCollection(className)) {
-                    println("COLLECTION fieldName : $beforeFieldName")
                     fieldName += ".[]"
                     val parameter = type.parameters[0]
                     val genericClass = (parameter as PsiClassType)
@@ -225,7 +212,6 @@ object MockMvcTestBoilerplateGenerator {
                     )
 
                     if(parameter is PsiPrimitiveType || isDocumentableClass(parameter.resolve()!!)){
-                        println("primitive fieldName : ${parameter.className}")
                         restDocList.add(generateFieldWithPathText(fieldName, field.name))
                     }else if(childClassType != null){
                         fieldName += "."
@@ -240,7 +226,6 @@ object MockMvcTestBoilerplateGenerator {
                     }
 
                 } else {
-                    println("else fieldName : $beforeFieldName")
                     if (resolvedClass == null) return@forEach
                     fieldName += "."
                     restDocList.addAll(
@@ -271,7 +256,6 @@ object MockMvcTestBoilerplateGenerator {
     }?.second
 
     private fun isDocumentableClass(targetClass: PsiClass): Boolean {
-        println("targetClass: ${targetClass.qualifiedName}")
         return targetClass.qualifiedName?.let { qualifiedName ->
             return TypeReference.isDocumentableClass(qualifiedName)
         } ?: false
