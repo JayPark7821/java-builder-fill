@@ -15,7 +15,7 @@ import com.intellij.psi.PsiElement
  */
 abstract class CompletionProcessor {
     abstract fun supportOption(): String
-    abstract fun applicable(targetClass: PsiClass): Boolean
+    abstract fun applicable(targetElement: PsiElement, targetClass: PsiClass): Boolean
     abstract fun completionString(targetClass: PsiClass, targetElement: PsiElement): String
 
     fun process(
