@@ -14,15 +14,32 @@ import com.intellij.psi.PsiElement
  */
 object  EditorUtils {
 
-    fun getIndent(psiElement: PsiElement): Int {
-        val psiFile = psiElement.containingFile ?: return 0
+    fun getIndent(psiElement: PsiElement): IndentInfo {
+        val psiFile = psiElement.containingFile ?: return IndentInfo.default()
         val documentManager = FileDocumentManager.getInstance()
-        val document: Document = documentManager.getDocument(psiFile.virtualFile) ?: return 0
+        val document: Document = documentManager.getDocument(psiFile.virtualFile) ?: return IndentInfo.default()
         val lineNumber = document.getLineNumber(psiElement.textOffset)
         val lineStartOffset = document.getLineStartOffset(lineNumber)
         val lineEndOffset = document.getLineEndOffset(lineNumber)
         val lineText = document.getText(TextRange(lineStartOffset, lineEndOffset))
-        return "^\\s*".toRegex().find(lineText)?.value?.length ?: 0
+
+        return IndentInfo(
+            "^\\s*".toRegex().find(lineText)?.value?.length ?: 0,
+            "^\\t*".toRegex().find(lineText)?.value?.length ?: 0,
+        )
+    }
+}
+
+data class IndentInfo
+(
+    val spaceCount: Int,
+    val tabCount: Int
+){
+    companion object {
+        fun default() = IndentInfo(0, 0)
     }
 
+    fun getIndentString() = " ".repeat(spaceCount) + "\t".repeat(tabCount)
+
 }
+

@@ -1,7 +1,7 @@
 package kr.craft.javaboilercraft.processor.util
 
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.*
+import kr.craft.javaboilercraft.processor.util.EditorUtils.getIndent
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -14,125 +14,147 @@ import java.util.concurrent.atomic.AtomicInteger
  * @since 11/30/23
  */
 object MockMvcTestBoilerplateGenerator {
-    fun generateBoilerplate(methodProperty: MethodProperty): String {
+
+    fun generateBoilerplate(methodProperty: MethodProperty, targetElement: PsiElement): String {
+
+        val defaultIndent = getIndent(targetElement).getIndentString()
 
         val mockMvcTestBoilerplate = StringBuilder()
-        mockMvcTestBoilerplate.append("\t@Test\n")
-        mockMvcTestBoilerplate.append("\tvoid ${methodProperty.name}() throws Exception {\n")
-        mockMvcTestBoilerplate.append("\t\tmockMvc.perform(\n")
-        mockMvcTestBoilerplate.append(getHttpMethodAndEndPoint(methodProperty))
-        mockMvcTestBoilerplate.append("\t\t\t\t.contentType(MediaType.APPLICATION_JSON)\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(0)}@Test\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(0)}void ${methodProperty.name}() throws Exception {\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(1)}mockMvc.perform(\n")
+        mockMvcTestBoilerplate.append(getHttpMethodAndEndPoint(methodProperty,defaultIndent))
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(3)}.contentType(MediaType.APPLICATION_JSON)\n")
 
         if (methodProperty.requestBody != null) {
             mockMvcTestBoilerplate.append(
-                "\t\t\t\t.accept(MediaType.APPLICATION_JSON)\n" +
-                        "\t\t\t\t.content(\n" +
-                        "\t\t\t\t\tobjectMapper.writeValueAsString( requestBody )\n" +
-                        "\t\t\t\t)\n"
+                "${defaultIndent}${getIndentPrefix(3)}.accept(MediaType.APPLICATION_JSON)\n" +
+                        "${defaultIndent}${getIndentPrefix(3)}.content(\n" +
+                        "${defaultIndent}${getIndentPrefix(4)}objectMapper.writeValueAsString( requestBody )\n" +
+                        "${defaultIndent}${getIndentPrefix(3)})\n"
             )
         }
-        mockMvcTestBoilerplate.append("\t\t)\n")
-        mockMvcTestBoilerplate.append("\t\t\t\t.andDo(print())\n")
-        mockMvcTestBoilerplate.append("\t\t\t\t.andDo(document(\"\" ")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(1)})\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(1)}.andDo(print())\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(1)}.andDo(\n")
+        mockMvcTestBoilerplate.append("${defaultIndent}${getIndentPrefix(2)}document(\"\"")
         if (methodProperty.pathVariables.isNotEmpty())
             mockMvcTestBoilerplate.append(
-                getPathParametersDocs(methodProperty)
+                getPathParametersDocs(methodProperty, defaultIndent)
             )
 
         if (methodProperty.queryParams.isNotEmpty())
             mockMvcTestBoilerplate.append(
-                getQueryParamsDocs(methodProperty)
+                getQueryParamsDocs(methodProperty, defaultIndent)
             )
 
         if (methodProperty.requestBody != null) {
             mockMvcTestBoilerplate.append(
-                getRequestFieldsDocs(methodProperty.requestBody)
+                getRequestFieldsDocs(methodProperty.requestBody, defaultIndent)
             )
         }
 
         if (methodProperty.responseType != null) {
             mockMvcTestBoilerplate.append(
-                getResponseFieldsDocs(methodProperty.responseType)
+                getResponseFieldsDocs(methodProperty.responseType, defaultIndent)
             )
         }
 
-
-        mockMvcTestBoilerplate.append("\n\t\t\t\t));\n")
-        mockMvcTestBoilerplate.append("\t}\n")
+        mockMvcTestBoilerplate.append("\n${defaultIndent}${getIndentPrefix(2)})")
+        mockMvcTestBoilerplate.append("\n${defaultIndent}${getIndentPrefix(1)});")
+        mockMvcTestBoilerplate.append("\n${defaultIndent}}\n")
 
         return mockMvcTestBoilerplate.toString()
     }
 
-    private fun getRequestFieldsDocs(requestBody: PsiParameter): String {
-        val psiClass = (requestBody.type as PsiClassType).resolve()
-        return if (psiClass != null) {
-            ",\n\t\t\t\t\trequestFields(" +
-                    "\n${
-                        generateRecursiveRestDocText(
-                            psiClass,
-                            "",
-                            AtomicInteger(10)
-                        ).joinToString(
-                            separator = ",\n"
-                        ) { fieldWithPath ->
-                            "\t\t\t\t\t\t $fieldWithPath"
-                        }
-                    }\t\t\t\t\t" +
-                    "\n\t\t\t\t\t)"
-        } else {
-            ""
-        }
-    }
-
-    private fun getResponseFieldsDocs(response: PsiType): String {
-        if (response.canonicalText == "void") return ""
-        val responseType = getPsiClassFrom(response) ?: return ""
-        return ",\n\t\t\t\t\tresponseFields(" +
+    private fun getRequestFieldsDocs(requestBody: PsiParameter, defaultIndent: String): String {
+        val requestBodyPsiClassType = requestBody.type as PsiClassType
+        return ",\n" +
+                "${defaultIndent}${getIndentPrefix(3)}requestFields(" +
                 "\n${
                     generateRecursiveRestDocText(
-                        responseType,
-                        "",
+                        requestBodyPsiClassType,
+                        getCollectionPathPrefix(requestBodyPsiClassType),
                         AtomicInteger(10)
                     ).joinToString(
                         separator = ",\n"
                     ) { fieldWithPath ->
-                        "\t\t\t\t\t\t $fieldWithPath"
+                        "${defaultIndent}${getIndentPrefix(4)}$fieldWithPath"
                     }
-                }\t\t\t\t\t" +
-                "\n\t\t\t\t\t)"
+                }\n" +
+                "${defaultIndent}${getIndentPrefix(3)})"
+    }
+
+    private fun getCollectionPathPrefix(psiClassType: PsiClassType): String {
+        val psiClassInfo = psiClassType.resolve() ?: return ""
+        if (TypeReference.isCollection(psiClassInfo.qualifiedName ?: ""))
+            return "[]."
+        return ""
+    }
+
+    private fun getResponseFieldsDocs(response: PsiType, defaultIndent: String): String {
+        if (response.canonicalText == "void") return ""
+        val responsePsiClassType = response as PsiClassType
+        return ",\n" +
+                "${defaultIndent}${getIndentPrefix(3)}responseFields(" +
+                "\n${
+                    generateRecursiveRestDocText(
+                        responsePsiClassType,
+                        getCollectionPathPrefix(responsePsiClassType),
+                        AtomicInteger(10)
+                    ).joinToString(
+                        separator = ",\n"
+                    ) { fieldWithPath ->
+                        "${defaultIndent}${getIndentPrefix(4)}$fieldWithPath"
+                    }
+                }\n" +
+                "${defaultIndent}${getIndentPrefix(3)})"
     }
 
     private fun getPsiClassFrom(
-        response: PsiType,
-    ): PsiClass? {
-        val psiClassType = (response as PsiClassType)
-        if (TypeReference.isCollection(response.canonicalText)) {
-            val parameter = psiClassType.parameters[0]
-            return (parameter as PsiClassType).resolve()
+        targetClass: PsiClassType,
+    ): PsiClassInfo? {
+        val psiClass = targetClass.resolve() ?: return null
+        if (TypeReference.isCollection(psiClass.qualifiedName ?: "")) {
+//            val typeParameters = psiClass.typeParameters.map { typeParameter ->
+//                val psiType = targetClass.parameters[typeParameter.index]
+//                Pair(typeParameter, psiType)
+//            }.toList()
+
+            val collectionClass = (targetClass.parameters[0] as PsiClassType).resolve() ?: return null
+            return PsiClassInfo(collectionClass, listOf(), "[].")
         }
-        return psiClassType.resolve()
+
+        val typeParameterList =
+            psiClass.typeParameters.map { typeParameter ->
+                val psiType = targetClass.parameters[typeParameter.index]
+                Pair(typeParameter, psiType)
+            }.toList()
+        return PsiClassInfo(psiClass, typeParameterList, "")
     }
 
-    private fun getPathParametersDocs(methodProperty: MethodProperty) =
+    private fun getPathParametersDocs(methodProperty: MethodProperty, defaultIndent: String) =
         methodProperty.pathVariables.joinToString(
-            prefix = ",\n\t\t\t\t\t pathParameters(\n",
+            prefix = ",\n" +
+                    "${defaultIndent}${getIndentPrefix(3)}pathParameters(\n",
             separator = ",\n",
-            postfix = "\n\t\t\t\t\t)"
+            postfix = "\n${defaultIndent}${getIndentPrefix(3)})"
         ) { pathVariable ->
-            "\t\t\t\t\t\t parameterWithName(\"${pathVariable.name}\").description(\"${pathVariable.name}\")"
+            "${defaultIndent}${getIndentPrefix(5)}parameterWithName(\"${pathVariable.name}\").description(\"${pathVariable.name}\")"
         }
 
-    private fun getQueryParamsDocs(methodProperty: MethodProperty) =
+    private fun getQueryParamsDocs(methodProperty: MethodProperty, defaultIndent: String) =
         methodProperty.queryParams.joinToString(
-            prefix = ",\n\t\t\t\t\t queryParameters(\n",
+            prefix = ",\n" +
+                    "${defaultIndent}${getIndentPrefix(3)}queryParameters(\n",
             separator = ",\n",
-            postfix = "\n\t\t\t\t\t)"
+            postfix = "\n${defaultIndent}${getIndentPrefix(3)})"
         ) { queryParam ->
-            "\t\t\t\t\t\t parameterWithName(\"${queryParam.name}\").description(\"${queryParam.name}\")"
+            "${defaultIndent}${getIndentPrefix(5)}parameterWithName(\"${queryParam.name}\").description(\"${queryParam.name}\")"
         }
 
-    private fun getHttpMethodAndEndPoint(methodProperty: MethodProperty) =
-        "\t\t\t${methodProperty.httpMethodName}(${getRequestPath(methodProperty)})\n"
+    private fun getHttpMethodAndEndPoint(methodProperty: MethodProperty, defaultIndent: String) =
+        "${defaultIndent}${getIndentPrefix(2)}${methodProperty.httpMethodName}(${getRequestPath(methodProperty)})\n"
 
     private fun getRequestPath(methodProperty: MethodProperty): String {
         val baseEndPoint = methodProperty.requestPath
@@ -160,55 +182,70 @@ object MockMvcTestBoilerplateGenerator {
     }
 
     private fun generateRecursiveRestDocText(
-        psiClass: PsiClass,
+        psiClassType: PsiClassType,
         beforeFieldName: String,
         atomicInteger: AtomicInteger,
     ): List<String> {
 
-        println("fieldName : $beforeFieldName")
-        println("1111 psiClass: ${psiClass.qualifiedName}")
         val restDocList: MutableList<String> = ArrayList()
         if (atomicInteger.getAndAdd(-1) < 1) {
             return restDocList
         }
-        val fields = psiClass.fields
 
-        fields.forEach { field: PsiField ->
-            val type = field.type
+        val psiClassInfo = getPsiClassFrom(psiClassType) ?: return restDocList
+
+        psiClassInfo.psiClass.fields.forEach { field ->
+            println("field : ${field.name}")
+            println("field type : ${field.type.canonicalText}")
+        }
+
+        psiClassInfo.psiClass.fields.forEach { field: PsiField ->
+            val type = getPsiType(psiClassInfo, field)
+
             val className = type.canonicalText
             var fieldName = beforeFieldName + field.name
 
-            if (type is PsiPrimitiveType)
-            {
+            if (type is PsiPrimitiveType) {
                 println("primitive fieldName : $beforeFieldName")
-                println("primitive psiClass: ${psiClass.qualifiedName}")
-                restDocList.add(generateFieldWithPathText(fieldName))
+                restDocList.add(generateFieldWithPathText(fieldName, field.name))
             }
             if (type is PsiClassType) {
                 val resolvedClass = type.resolve()
-                if (resolvedClass != null && isDocumentableClass(resolvedClass)){
+                if (resolvedClass != null && isDocumentableClass(resolvedClass)) {
                     println("isDocumentableClass fieldName : $beforeFieldName")
-                    println("isDocumentableClass psiClass: ${psiClass.qualifiedName}")
-                    println("isDocumentableClass qualifiedName: ${psiClass.qualifiedName}")
-                    restDocList.add(generateFieldWithPathText(fieldName))
+                    restDocList.add(generateFieldWithPathText(fieldName, field.name))
                 } else if (TypeReference.isCollection(className)) {
                     println("COLLECTION fieldName : $beforeFieldName")
-                    println("COLLECTION psiClass: ${psiClass.qualifiedName}")
+                    fieldName += ".[]"
                     val parameter = type.parameters[0]
-                    val genericClass = (parameter as PsiClassType).resolve()
-                    fieldName += ".[]."
-                    if (genericClass == null) return@forEach
-                    restDocList.addAll(
-                        generateRecursiveRestDocText(genericClass, fieldName, atomicInteger)
+                    val genericClass = (parameter as PsiClassType)
+                    val childClassType = getPsiTypeByClassName(
+                        psiClassInfo,
+                        genericClass.className
                     )
+
+                    if(parameter is PsiPrimitiveType || isDocumentableClass(parameter.resolve()!!)){
+                        println("primitive fieldName : ${parameter.className}")
+                        restDocList.add(generateFieldWithPathText(fieldName, field.name))
+                    }else if(childClassType != null){
+                        fieldName += "."
+                        restDocList.addAll(
+                            generateRecursiveRestDocText(childClassType as PsiClassType, fieldName, atomicInteger)
+                        )
+                    }else{
+                        fieldName += "."
+                        restDocList.addAll(
+                            generateRecursiveRestDocText(genericClass, fieldName, atomicInteger)
+                        )
+                    }
+
                 } else {
                     println("else fieldName : $beforeFieldName")
-                    println("else psiClass: ${psiClass.qualifiedName}")
                     if (resolvedClass == null) return@forEach
                     fieldName += "."
                     restDocList.addAll(
                         generateRecursiveRestDocText(
-                            resolvedClass,
+                            type,
                             fieldName,
                             atomicInteger
                         )
@@ -219,6 +256,20 @@ object MockMvcTestBoilerplateGenerator {
         return restDocList
     }
 
+    private fun getPsiType(
+        psiClass: PsiClassInfo,
+        type: PsiField,
+    ) = psiClass.genericTypeParameters.find { typeParameter ->
+        typeParameter.first.text == type.type.canonicalText
+    }?.second ?: type.type
+
+    private fun getPsiTypeByClassName(
+        psiClass: PsiClassInfo,
+        className: String,
+    ) = psiClass.genericTypeParameters.find { typeParameter ->
+        typeParameter.first.text == className
+    }?.second
+
     private fun isDocumentableClass(targetClass: PsiClass): Boolean {
         println("targetClass: ${targetClass.qualifiedName}")
         return targetClass.qualifiedName?.let { qualifiedName ->
@@ -226,6 +277,15 @@ object MockMvcTestBoilerplateGenerator {
         } ?: false
     }
 
-    private fun generateFieldWithPathText(fieldName: String) =
-        "fieldWithPath(\"$fieldName\").description(\"$fieldName\")"
+    private fun getIndentPrefix(depth: Int) =
+        "\t".repeat(depth)
+
+    private fun generateFieldWithPathText(fieldNameWithPath: String, fieldName: String) =
+        "fieldWithPath(\"$fieldNameWithPath\").description(\"$fieldName\")"
 }
+
+data class PsiClassInfo(
+    val psiClass: PsiClass,
+    val genericTypeParameters: List<Pair<PsiTypeParameter, PsiType>>,
+    val pathPrefix: String,
+)

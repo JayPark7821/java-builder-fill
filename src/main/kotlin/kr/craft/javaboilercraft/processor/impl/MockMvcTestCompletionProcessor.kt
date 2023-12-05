@@ -38,7 +38,7 @@ class MockMvcTestCompletionProcessor : CompletionProcessor() {
     override fun completionString(targetClass: PsiClass, targetElement: PsiElement): String {
         val result = targetClass.allMethods.mapNotNull { method ->
             convert(targetClass, method)?.let {
-                generateBoilerplate(it)
+                generateBoilerplate(it, targetElement)
             }
         }
         return result.joinToString("\n")
